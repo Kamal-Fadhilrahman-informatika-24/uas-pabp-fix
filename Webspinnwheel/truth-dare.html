@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Truth or Dare – SpinDecide</title>
+
+  <meta name="theme-color" content="#0f0f1a">
+  <meta name="description" content="Main Truth or Dare seru bersama teman-teman!">
+  <link rel="manifest" href="manifest.json">
+
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="global-features.css">
+  <link rel="stylesheet" href="truth-dare.css">
+  <script src="theme-controller.js"></script>
+  <script src="audio-controller.js"></script>
+</head>
+<body class="dashboard-page">
+
+  <nav class="navbar">
+    <div class="nav-logo">
+      <span>🎯</span>
+      <span class="nav-appname">SpinDecide</span>
+    </div>
+
+    <div class="nav-links">
+      <a href="dashboard.html"  class="nav-link">🎰 Spin</a>
+      <a href="truth-dare.html" class="nav-link active">🎭 Truth or Dare</a>
+      <a href="double-spin.html" class="nav-link">⚡ Double Spin</a>
+      <a href="multiplayer.html" class="nav-link">🌐 Main Bareng</a>
+      <a href="history.html"    class="nav-link">📋 Riwayat</a>
+    </div>
+
+    <div class="nav-user">
+      <div class="avatar" id="userAvatar">?</div>
+      <span class="username" id="userName">Loading…</span>
+      <button class="btn-logout" onclick="logoutUser()">Keluar</button>
+    </div>
+  </nav>
+
+  <div class="td-hero">
+    <div class="td-hero-badge">🎰 Roda Putar Interaktif</div>
+    <h1 class="td-hero-title">Truth <span class="td-or">or</span> Dare</h1>
+  </div>
+
+  <div class="td-layout">
+    
+    <div id="setupSection" class="td-section active">
+      <div class="td-panel">
+        <h2>1. Siapa yang main?</h2>
+        <div class="td-add-player-form">
+          <input type="text" id="playerNameInput" placeholder="Ketik nama pemain..." onkeydown="handlePlayerKey(event)">
+          <button onclick="addPlayer()">Tambah</button>
+        </div>
+        <div class="td-players-list" id="tdPlayersList">
+          <div class="td-no-players">Belum ada pemain. Tambahkan minimal 2 orang!</div>
+        </div>
+      </div>
+
+      <div class="td-panel">
+        <h2>2. Buat Tantanganmu Sendiri! (Satu baris = Satu pertanyaan)</h2>
+        <div class="td-textareas">
+          <div class="td-textarea-group">
+            <label>Kategori TRUTH 🧠</label>
+            <textarea id="truthInput" rows="6" placeholder="Contoh:&#10;1. Siapa crush kamu saat ini?&#10;2. Kapan terakhir kali kamu menangis?"></textarea>
+          </div>
+          <div class="td-textarea-group">
+            <label>Kategori DARE 🔥</label>
+            <textarea id="dareInput" rows="6" placeholder="Contoh:&#10;1. Nyanyikan lagu balonku pakai huruf O&#10;2. Telepon mantan sekarang juga!"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <button class="td-btn-massive" id="startBtn" onclick="startGame()">MULAI PUTARAN 🚀</button>
+    </div>
+
+    <div id="playSection" class="td-section" style="display:none; text-align:center;">
+      
+      <h2 id="playTitle" class="td-spin-title">Giliran Siapa Selanjutnya?</h2>
+      
+      <div class="td-wheel-wrapper">
+         <div class="td-wheel-pointer"></div>
+         <canvas id="tdWheel" width="350" height="350"></canvas>
+      </div>
+
+      <div class="td-spin-box task-box" id="wheelResultText">Menunggu Putaran...</div>
+
+      <div id="actionArea">
+        <button class="td-btn-spin" id="btnSpinName" onclick="doSpinName()">🎲 PUTAR RODA NAMA</button>
+        
+        <div id="choiceArea" style="display:none;">
+          <h3 style="margin-bottom:20px;"><span id="chosenNameHighlight" class="highlight-text"></span>, Pilih Nasibmu!</h3>
+          <button class="td-mode-btn td-truth-btn" style="display:inline-block; margin-right:15px; padding: 15px 30px;" onclick="doChooseMode('truth')">🧠 TRUTH</button>
+          <button class="td-mode-btn td-dare-btn" style="display:inline-block; padding: 15px 30px;" onclick="doChooseMode('dare')">🔥 DARE</button>
+        </div>
+
+        <button class="td-btn-spin" id="btnSpinTask" style="display:none;" onclick="doSpinTask()">🎲 PUTAR TANTANGAN</button>
+        
+        <button class="td-btn-next-round" id="btnNextRound" style="display:none;" onclick="startNewRound()">🔄 PUTAR NAMA LAGI</button>
+      </div>
+
+      <button class="td-btn-back-setup" onclick="backToSetup()" style="margin-top:30px;">Kembali ke Pengaturan</button>
+    </div>
+
+  </div>
+
+  <div id="resultModal" class="td-modal-overlay" style="display:none;">
+    <div class="td-modal-card">
+      <div class="td-modal-badge" id="modalBadge">🔥 DARE</div>
+      <h3 class="td-modal-title">Untuk <span id="modalPlayerName" class="highlight-text">Pemain</span>!</h3>
+      <div class="td-modal-task" id="modalTaskText">Tugasnya di sini...</div>
+      <button class="td-btn-massive" onclick="closeResultModal()">SIAP LAKSANAKAN! 🫡</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="supabase.js"></script>
+  <script src="auth.js"></script>
+  <script src="truth-dare.js"></script>
+
+  <script>
+    (async function init() {
+      const session = await requireAuth();
+      const user    = session.user;
+      const name = user.user_metadata?.name || user.email.split('@')[0];
+      document.getElementById('userName').textContent = name;
+      document.getElementById('userAvatar').textContent = name.charAt(0).toUpperCase();
+    })();
+  </script>
+</body>
+</html>

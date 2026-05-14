@@ -1,0 +1,100 @@
+/* ============================================================
+   truth-dare.css — STYLES RODA PUTAR TRUTH OR DARE
+   ============================================================ */
+
+.td-hero { text-align: center; padding: 40px 24px 10px; }
+.td-hero-badge { display: inline-block; background: rgba(199,125,255,0.15); border: 1px solid rgba(199,125,255,0.3); color: var(--accent-purple); padding: 6px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 700; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;}
+.td-hero-title { font-size: clamp(2rem, 6vw, 3.5rem); font-weight: 800; color: var(--text-primary); }
+.td-or { font-style: italic; background: linear-gradient(135deg, var(--accent-1), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+.td-layout { max-width: 800px; margin: 0 auto; padding: 20px 24px 60px; display: flex; flex-direction: column; gap: 24px; }
+
+/* ── Panel Pengaturan ─────────────────────────────────────── */
+.td-panel { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 20px; }
+.td-panel h2 { font-size: 1.2rem; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+
+.td-add-player-form { display: flex; gap: 10px; margin-bottom: 16px; }
+.td-add-player-form input { flex: 1; background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; color: var(--text-primary); font-size: 1rem; }
+.td-add-player-form input:focus { outline: none; border-color: var(--accent-4); }
+.td-add-player-form button { background: var(--accent-4); color: white; border: none; padding: 12px 24px; border-radius: var(--radius-sm); font-weight: bold; cursor: pointer; transition: 0.2s; }
+.td-add-player-form button:hover { background: var(--accent-3); }
+
+.td-players-list { display: flex; flex-wrap: wrap; gap: 10px; }
+.td-player-chip { background: var(--bg-card); border: 1px solid var(--border); padding: 8px 16px; border-radius: 50px; display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.td-player-remove { background: none; border: none; color: var(--accent-1); cursor: pointer; font-weight: bold; }
+
+.td-textareas { display: flex; gap: 16px; flex-wrap: wrap; }
+.td-textarea-group { flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 8px; }
+.td-textarea-group label { font-weight: bold; font-size: 0.9rem; color: var(--text-secondary); }
+.td-textarea-group textarea { background: var(--bg-input); border: 1px solid var(--border); color: var(--text-primary); padding: 12px; border-radius: var(--radius-sm); font-family: var(--font-main); resize: vertical; line-height: 1.5; }
+.td-textarea-group textarea:focus { outline: none; border-color: var(--accent-purple); }
+
+.td-btn-massive { width: 100%; background: linear-gradient(135deg, var(--accent-purple), var(--accent-4)); color: white; border: none; padding: 18px; font-size: 1.2rem; font-weight: 900; border-radius: var(--radius); cursor: pointer; box-shadow: 0 8px 24px rgba(199,125,255,0.3); transition: transform 0.2s; }
+.td-btn-massive:hover { transform: translateY(-3px); }
+
+/* ── Roda Putar (Canvas) ──────────────────────────────────── */
+#playSection { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 40px 24px; }
+.td-spin-title { font-size: 1.5rem; color: var(--text-primary); margin-bottom: 30px; font-weight: 800; letter-spacing: 1px; }
+.highlight-text { color: var(--accent-4); font-size: 1.5rem; font-weight: 900; text-transform: uppercase; }
+
+.td-wheel-wrapper { position: relative; width: 350px; height: 350px; margin: 0 auto 30px auto; }
+.td-wheel-pointer { 
+  position: absolute; top: -15px; left: 50%; transform: translateX(-50%); 
+  width: 0; height: 0; 
+  border-left: 20px solid transparent; 
+  border-right: 20px solid transparent; 
+  border-top: 35px solid var(--accent-1); 
+  z-index: 10; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+}
+#tdWheel { 
+  width: 100%; height: 100%; border-radius: 50%; 
+  border: 6px solid var(--bg-card); 
+  box-shadow: 0 0 30px rgba(0,0,0,0.4), inset 0 0 20px rgba(0,0,0,0.5); 
+}
+
+.td-spin-box.task-box { font-size: 1.3rem; font-weight: 600; min-height: 80px; padding: 20px; background: rgba(0,0,0,0.2); border-radius: var(--radius-sm); border: 1px dashed var(--border); margin-bottom: 30px; display: flex; align-items: center; justify-content: center; color: var(--text-primary); }
+
+.td-btn-spin { background: var(--accent-4); color: white; border: none; padding: 16px 32px; font-size: 1.1rem; font-weight: bold; border-radius: 50px; cursor: pointer; box-shadow: 0 6px 20px rgba(77,150,255,0.3); transition: all 0.2s; width: 100%; max-width: 400px; margin: 0 auto; display: block;}
+.td-btn-spin:active { transform: scale(0.95); }
+.td-btn-spin:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.td-mode-btn { border-radius: var(--radius); border: 2px solid transparent; cursor: pointer; transition: all 0.2s; font-size: 1.1rem; font-weight: bold; }
+.td-truth-btn { background: rgba(77, 150, 255, 0.1); border-color: rgba(77, 150, 255, 0.3); color: var(--accent-4); }
+.td-truth-btn:hover { background: rgba(77, 150, 255, 0.2); transform: translateY(-5px); box-shadow: 0 8px 20px rgba(77,150,255,0.2); }
+.td-dare-btn { background: rgba(255, 107, 107, 0.1); border-color: rgba(255, 107, 107, 0.3); color: var(--accent-1); }
+.td-dare-btn:hover { background: rgba(255, 107, 107, 0.2); transform: translateY(-5px); box-shadow: 0 8px 20px rgba(255,107,107,0.2); }
+
+.td-btn-next-round { background: var(--text-primary); color: var(--bg-base); border: none; padding: 14px 28px; font-size: 1rem; font-weight: bold; border-radius: 50px; cursor: pointer; width: 100%; max-width: 400px; margin: 0 auto; display: block; }
+.td-btn-back-setup { background: transparent; color: var(--text-muted); border: none; padding: 10px; cursor: pointer; text-decoration: underline; display: block; margin: 30px auto 0; }
+
+@media (max-width: 640px) {
+  .td-textareas { flex-direction: column; }
+  .td-wheel-wrapper { width: 280px; height: 280px; }
+}
+
+/* ── Modal Pop-up Hasil Akhir ─────────────────────────────── */
+.td-modal-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999; animation: fadeIn 0.3s ease;
+}
+.td-modal-card {
+  background: var(--bg-surface); border: 2px solid var(--accent-purple);
+  border-radius: var(--radius); padding: 40px 30px; text-align: center;
+  max-width: 90%; width: 450px; box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+  animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.td-modal-badge {
+  display: inline-block; padding: 10px 24px; border-radius: 50px;
+  font-weight: 900; letter-spacing: 2px; margin-bottom: 20px; font-size: 1.2rem;
+}
+.td-modal-badge.truth { background: rgba(77, 150, 255, 0.2); color: var(--accent-4); border: 1px solid var(--accent-4); }
+.td-modal-badge.dare { background: rgba(255, 107, 107, 0.2); color: var(--accent-1); border: 1px solid var(--accent-1); }
+.td-modal-title { font-size: 1.5rem; margin-bottom: 20px; color: var(--text-secondary); }
+.td-modal-task { font-size: 1.8rem; font-weight: 900; color: var(--text-primary); margin-bottom: 40px; line-height: 1.4; text-shadow: 0 0 10px rgba(255,255,255,0.1); }
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.7) translateY(30px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}

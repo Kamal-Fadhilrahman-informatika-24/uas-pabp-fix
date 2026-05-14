@@ -1,0 +1,343 @@
+/* ============================================================
+   global-features.css
+   SpinDecide — Dark Mode / Light Mode + Mute/Unmute Styles
+   
+   File ini HANYA menambahkan:
+   1. CSS Variables untuk light mode ([data-theme="light"])
+   2. Smooth theme transition
+   3. Style tombol theme toggle
+   4. Style tombol mute toggle
+   
+   Tidak mengubah variabel/style asli sama sekali.
+   ============================================================ */
+
+/* ── Smooth Theme Transition ─────────────────────────────── */
+/* Hanya property warna yang di-transition, bukan layout */
+*,
+*::before,
+*::after {
+  transition:
+    background-color 0.3s ease,
+    background 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+/* Pengecualian: elemen yang tidak perlu transition warna */
+canvas,
+.confetti-dot,
+.wheel-pointer,
+[style*="animation"] {
+  transition: none !important;
+}
+
+/* ── Dark Mode (default — sama dengan :root asli) ────────── */
+[data-theme="dark"],
+:root {
+  --bg-base:       #0f0f1a;
+  --bg-surface:    #16162a;
+  --bg-card:       #1c1c33;
+  --bg-input:      #121220;
+
+  --text-primary:  #F0F0FF;
+  --text-secondary:#A0A0C0;
+  --text-muted:    #606080;
+
+  --border:        rgba(255,255,255,0.07);
+  --shadow:        0 8px 32px rgba(0,0,0,0.4);
+
+  /* Navbar glass effect */
+  --navbar-bg:     rgba(15,15,26,0.92);
+  --modal-overlay: rgba(0,0,0,0.75);
+}
+
+/* ── Light Mode ──────────────────────────────────────────── */
+[data-theme="light"] {
+  --bg-base:       #f5f5fa;
+  --bg-surface:    #ffffff;
+  --bg-card:       #ededf5;
+  --bg-input:      #f0f0f8;
+
+  --text-primary:  #1a1a2e;
+  --text-secondary:#4a4a6a;
+  --text-muted:    #8888aa;
+
+  --border:        rgba(0,0,0,0.10);
+  --shadow:        0 8px 32px rgba(0,0,0,0.12);
+
+  /* Navbar glass effect (light) */
+  --navbar-bg:     rgba(245,245,250,0.92);
+  --modal-overlay: rgba(0,0,0,0.45);
+}
+
+/* ── Navbar background menggunakan variable ──────────────── */
+[data-theme="light"] .navbar {
+  background: var(--navbar-bg);
+}
+
+[data-theme="dark"] .navbar {
+  background: var(--navbar-bg, rgba(15,15,26,0.92));
+}
+
+/* ── Modal overlay di light mode ────────────────────────── */
+[data-theme="light"] .modal-overlay {
+  background: var(--modal-overlay);
+}
+
+/* ── Auth page background di light mode ─────────────────── */
+[data-theme="light"] .auth-page {
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(77,150,255,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(199,125,255,0.06) 0%, transparent 60%),
+    var(--bg-base);
+}
+
+/* ── Grain texture di light mode: lebih halus ────────────── */
+[data-theme="light"] body::before {
+  opacity: 0.4;
+}
+
+/* ── Input focus di light mode ───────────────────────────── */
+[data-theme="light"] .form-group input:focus {
+  box-shadow: 0 0 0 3px rgba(77,150,255,0.20);
+}
+
+/* ── Canvas wheel (border tengah) di light mode ──────────── */
+[data-theme="light"] #wheelCanvas {
+  filter: drop-shadow(0 4px 16px rgba(0,0,0,0.15));
+}
+
+/* ── Result overlay di light mode ───────────────────────── */
+[data-theme="light"] .result-overlay {
+  background: rgba(0,0,0,0.45);
+}
+
+/* ── History card border di light mode ──────────────────── */
+[data-theme="light"] .history-card {
+  border-color: rgba(0,0,0,0.10);
+}
+
+/* ── Spinner loading di light mode ──────────────────────── */
+[data-theme="light"] .spinner {
+  border-color: rgba(0,0,0,0.15);
+  border-top-color: var(--accent-4);
+}
+
+/* ══════════════════════════════════════════════════════════
+   TOMBOL THEME TOGGLE (Dark/Light)
+   ══════════════════════════════════════════════════════════ */
+
+.btn-theme-toggle {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  /* override global transition — tombol ini BOLEH animate */
+  transition: background-color 0.2s, border-color 0.2s, transform 0.2s !important;
+  line-height: 1;
+  padding: 0;
+}
+
+.btn-theme-toggle:hover {
+  background: var(--bg-input);
+  border-color: var(--accent-4);
+  transform: scale(1.1) rotate(15deg);
+}
+
+.btn-theme-toggle:active {
+  transform: scale(0.95);
+}
+
+/* Floating variant (untuk halaman auth) */
+.btn-theme-toggle--floating {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 500;
+  box-shadow: var(--shadow);
+}
+
+/* ══════════════════════════════════════════════════════════
+   TOMBOL MUTE TOGGLE (Sound)
+   ══════════════════════════════════════════════════════════ */
+
+.btn-mute-toggle {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.2s, border-color 0.2s, transform 0.2s !important;
+  line-height: 1;
+  padding: 0;
+}
+
+.btn-mute-toggle:hover {
+  background: var(--bg-input);
+  border-color: var(--accent-3);
+  transform: scale(1.1);
+}
+
+.btn-mute-toggle:active {
+  transform: scale(0.95);
+}
+
+/* Saat muted: tampilkan visual feedback subtle */
+.btn-mute-toggle.muted {
+  border-color: rgba(255, 107, 107, 0.4);
+  background: rgba(255, 107, 107, 0.08);
+}
+
+/* Floating variant (untuk halaman auth) */
+.btn-mute-toggle--floating {
+  position: fixed;
+  top: 60px;   /* di bawah theme toggle */
+  right: 16px;
+  z-index: 500;
+  box-shadow: var(--shadow);
+}
+
+/* ── Responsive: tombol di mobile ────────────────────────── */
+@media (max-width: 480px) {
+  .btn-theme-toggle,
+  .btn-mute-toggle {
+    width: 32px;
+    height: 32px;
+    font-size: 0.9rem;
+  }
+
+  .btn-theme-toggle--floating {
+    top: 12px;
+    right: 12px;
+  }
+
+  .btn-mute-toggle--floating {
+    top: 52px;
+    right: 12px;
+  }
+}
+
+/* ── Double Spin light mode ──────────────────────────────── */
+[data-theme="light"] .ds-wheel-panel,
+[data-theme="light"] .ds-panel,
+[data-theme="light"] .ds-results-panel {
+  background: var(--bg-card);
+  border-color: var(--border);
+}
+
+[data-theme="light"] .ds-connector {
+  background: var(--border);
+}
+
+/* ── Multiplayer light mode ──────────────────────────────── */
+[data-theme="light"] .mp-panel,
+[data-theme="light"] .room-header,
+[data-theme="light"] .player-card,
+[data-theme="light"] .feed-item {
+  background: var(--bg-card);
+  border-color: var(--border);
+}
+
+[data-theme="light"] .server-status {
+  color: var(--text-secondary);
+}
+
+/* ── Truth or Dare light mode ────────────────────────────── */
+[data-theme="light"] .td-card,
+[data-theme="light"] .td-panel,
+[data-theme="light"] .td-stats {
+  background: var(--bg-card);
+  border-color: var(--border);
+}
+
+/* ── Leaderboard / modal light mode ────────────────────────  */
+[data-theme="light"] .leaderboard-item,
+[data-theme="light"] .modal-content,
+[data-theme="light"] .modal-body {
+  background: var(--bg-card);
+  border-color: var(--border);
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .modal-header {
+  border-bottom-color: var(--border);
+}
+
+/* ── Popup / overlay general ─────────────────────────────── */
+[data-theme="light"] .result-card {
+  background: var(--bg-surface);
+  box-shadow: 0 16px 64px rgba(0,0,0,0.18);
+  color: var(--text-primary);
+}
+
+/* ── Form / input light mode ─────────────────────────────── */
+[data-theme="light"] input[type="text"],
+[data-theme="light"] input[type="email"],
+[data-theme="light"] input[type="password"],
+[data-theme="light"] select,
+[data-theme="light"] textarea {
+  background: var(--bg-input);
+  border-color: var(--border);
+  color: var(--text-primary);
+}
+
+[data-theme="light"] input::placeholder {
+  color: var(--text-muted);
+}
+
+/* ── Panel card light mode ───────────────────────────────── */
+[data-theme="light"] .panel {
+  background: var(--bg-card);
+  border-color: var(--border);
+}
+
+[data-theme="light"] .option-item {
+  background: var(--bg-input);
+  border-color: var(--border);
+}
+
+/* ── Navbar user info light mode ─────────────────────────── */
+[data-theme="light"] .username {
+  color: var(--text-secondary);
+}
+
+[data-theme="light"] .avatar {
+  background: var(--bg-input);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+[data-theme="light"] .btn-logout {
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  border-color: var(--border);
+}
+
+[data-theme="light"] .btn-logout:hover {
+  background: rgba(255,80,80,0.12);
+  color: #e05555;
+  border-color: rgba(255,80,80,0.3);
+}
+
+/* ── Toast light mode ────────────────────────────────────── */
+[data-theme="light"] .toast {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}

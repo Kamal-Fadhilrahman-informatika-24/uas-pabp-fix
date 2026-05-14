@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daftar – SpinDecide</title>
+
+  <meta name="theme-color" content="#0f0f1a">
+  <link rel="manifest" href="manifest.json">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="global-features.css">
+
+  <style>
+    /* Sedikit tambahan khusus register */
+    .success-banner {
+      background: rgba(107,203,119,0.15);
+      border: 1px solid rgba(107,203,119,0.3);
+      color: #6BCB77;
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+      font-size: 0.9rem;
+      display: none;
+      line-height: 1.5;
+    }
+    .success-banner.visible { display: block; }
+    .success-banner a { color: #6BCB77; font-weight: 700; text-decoration: underline; }
+  </style>
+  <!-- ── Global Features: Dark Mode + Mute Control ── -->
+  <script src="theme-controller.js"></script>
+  <script src="audio-controller.js"></script>
+</head>
+<body class="auth-page">
+
+  <div class="auth-card">
+    <div class="auth-logo">
+      <span class="logo-icon">🎯</span>
+      <h1>SpinDecide</h1>
+      <p>Buat akun gratis sekarang!</p>
+    </div>
+
+    <form class="auth-form" id="registerForm" onsubmit="handleRegister(event)">
+
+      <div class="form-group">
+        <label for="name">Nama Lengkap</label>
+        <input
+          type="text" id="name" name="name"
+          placeholder="Nama kamu"
+          required autocomplete="name"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          type="email" id="email" name="email"
+          placeholder="nama@email.com"
+          required autocomplete="email"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          type="password" id="password" name="password"
+          placeholder="Minimal 6 karakter"
+          required minlength="6"
+          autocomplete="new-password"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Konfirmasi Password</label>
+        <input
+          type="password" id="confirmPassword" name="confirmPassword"
+          placeholder="Ulangi password"
+          required
+          autocomplete="new-password"
+        >
+      </div>
+
+      <div class="auth-error" id="errorMsg"></div>
+      <div class="success-banner" id="successMsg"></div>
+
+      <button type="submit" class="btn-submit" id="submitBtn">
+        Daftar Sekarang
+      </button>
+
+    </form>
+
+    <div class="auth-footer">
+      Sudah punya akun?
+      <a href="login.html">Masuk di sini</a>
+    </div>
+  </div>
+
+  <script src="supabase.js"></script>
+  <script src="auth.js"></script>
+  <script>
+    requireGuest();
+
+    async function handleRegister(e) {
+      e.preventDefault();
+
+      const name     = document.getElementById('name').value.trim();
+      const email    = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const confirm  = document.getElementById('confirmPassword').value;
+      const btn      = document.getElementById('submitBtn');
+      const errEl    = document.getElementById('errorMsg');
+      const sucEl    = document.getElementById('successMsg');
+
+      // Reset
+      errEl.textContent = '';
+      errEl.classList.remove('visible');
+      sucEl.classList.remove('visible');
+
+      // Validasi password match
+      if (password !== confirm) {
+        errEl.textContent = 'Password dan konfirmasi tidak cocok!';
+        errEl.classList.add('visible');
+        return;
+      }
+
+      btn.disabled    = true;
+      btn.textContent = 'Mendaftarkan…';
+
+      try {
+        await registerUser(name, email, password);
+
+        // Tampilkan pesan sukses
+        sucEl.innerHTML = `
+          ✅ Akun berhasil dibuat!<br>
+          <small>Cek email kamu untuk verifikasi, lalu <a href="login.html">login di sini</a>.</small>
+        `;
+        sucEl.classList.add('visible');
+
+        // Sembunyikan form
+        document.getElementById('registerForm').querySelectorAll('input, button').forEach(el => el.disabled = true);
+
+      } catch (err) {
+        let msg = 'Gagal mendaftar. Coba lagi.';
+        if (err.message?.includes('already registered')) {
+          msg = 'Email sudah terdaftar. Silakan login.';
+        } else if (err.message?.includes('Password')) {
+          msg = 'Password minimal 6 karakter.';
+        }
+        errEl.textContent = msg;
+        errEl.classList.add('visible');
+
+        btn.disabled    = false;
+        btn.textContent = 'Daftar Sekarang';
+      }
+    }
+  </script>
+</body>
+</html>
